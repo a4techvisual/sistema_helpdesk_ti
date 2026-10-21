@@ -1,0 +1,121 @@
+{% extends 'base-crud.html' %}
+{% block title %}Painel{% endblock %}
+{% block content %}
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">Olá, {{ user.username }}</h1>
+      <p class="page-sub">
+        {% if resumo.criticos %}Há <strong>{{ resumo.criticos }} chamado{{ resumo.criticos|pluralize }} crítico{{ resumo.criticos|pluralize }}</strong> esperando por você.
+        {% else %}Nenhum chamado crítico pendente.{% endif %}
+      </p>
+    </div>
+    <a href="{% url 'novo-chamado' %}" class="btn-accent"><i class="bi bi-plus-lg"></i> Abrir chamado</a>
+  </div>
+
+  <div class="stats">
+    <div class="stat dark">
+      <div class="label">Total de chamados</div>
+      <div class="value">{{ resumo.total }}</div>
+    </div>
+    <div class="stat">
+      <div class="label">Abertos</div>
+      <div class="value">{{ resumo.abertos }}</div>
+    </div>
+    <div class="stat">
+      <div class="label">Em atendimento</div>
+      <div class="value">{{ resumo.andamento }}</div>
+    </div>
+    <div class="stat">
+      <div class="label">Resolvidos</div>
+      <div class="value">{{ resumo.resolvidos }}</div>
+    </div>
+  </div>
+
+  {% if query %}
+    <div class="chips">
+      <span class="chip active"><i class="bi bi-search me-1"></i> Resultados para “{{ query }}” · {{ chamados|length }}</span>
+      <a class="chip" href="{% url 'index' %}"><i class="bi bi-x-lg me-1"></i> Limpar busca</a>
+    </div>
+  {% else %}
+    <div class="chips">
+      <a class="chip {% if not status_atual %}active{% endif %}" href="{% url 'index' %}">Todos</a>
+      {% for valor, rotulo in status_opcoes %}
+        <a class="chip {% if status_atual == valor %}active{% endif %}" href="?status={{ valor }}">{{ rotulo }}</a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="panel">
+    <div class="ticket-head">
+      <span>Protocolo</span><span>Chamado</span><span>Categoria</span><span>Prioridade</span><span>Status</span><span>Abertura</span><span></span>
+    </div>
+    {% for chamado in chamados %}
+      <div class="ticket st-{{ chamado.status }}" style="--prio: var(--p-{{ chamado.prioridade }})">
+        <span class="proto">{{ chamado.protocolo }}</span>
+        <div class="main-col" style="min-width:0">
+          <div class="title">{{ chamado.titulo }}</div>
+          <div class="meta">
+            {{ chamado.solicitante }} · {{ chamado.setor }}
+            {% if chamado.patrimonio %} · <span class="mono">{{ chamado.patrimonio }}</span>{% endif %}
+          </div>
+        </div>
+        <span class="cat d-xl"><i class="bi {{ chamado.icone }}"></i> {{ chamado.get_categoria_display }}</span>
+        <span class="d-xl"><span class="pill prio-{{ chamado.prioridade }}">{{ chamado.get_prioridade_display }}</span></span>
+        <span class="status d-xl"><span class="dot"></span> {{ chamado.get_status_display }}</span>
+        <span class="date d-xl" title="{{ chamado.data_abertura|date:'d/m/Y H:i' }}">{{ chamado.data_abertura|date:"d/m/Y" }}<br><small>{{ chamado.data_abertura|date:"H:i" }}</small></span>
+        <div class="tags-m">
+          <span class="pill prio-{{ chamado.prioridade }}">{{ chamado.get_prioridade_display }}</span>
+          <span class="status"><span class="dot"></span> {{ chamado.get_status_display }}</span>
+          <span class="cat"><i class="bi {{ chamado.icone }}"></i> {{ chamado.get_categoria_display }}</span>
+          <span class="date">{{ chamado.data_abertura|date:"d/m/Y H:i" }}</span>
+        </div>
+        <div class="actions">
+          <a class="icon-btn" href="{% url 'alterar_chamado' chamado.codigo_chamado %}" title="Alterar"><i class="bi bi-pencil"></i></a>
+          <button type="button" class="icon-btn danger" title="Excluir"
+                  data-bs-toggle="modal" data-bs-target="#modalExcluir"
+                  data-url="{% url 'excluir_chamado' chamado.codigo_chamado %}"
+                  data-nome="{{ chamado.protocolo }} — {{ chamado.titulo }}">
+            <i class="bi bi-trash3"></i>
+          </button>
+        </div>
+      </div>
+    {% empty %}
+      <div class="empty">
+        <div class="art"><i class="bi bi-inbox"></i></div>
+        {% if query %}
+          <h5 class="fw-bold">Nada encontrado</h5>
+          <p class="text-muted-2">Nenhum chamado corresponde a “{{ query }}”.</p>
+        {% else %}
+          <h5 class="fw-bold">Nenhum chamado cadastrado</h5>
+          <p class="text-muted-2">Os chamados abertos aparecerão nesta lista.</p>
+          <a href="{% url 'novo-chamado' %}" class="btn-accent mt-2"><i class="bi bi-plus-lg"></i> Abrir o primeiro chamado</a>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Modal de confirmação de exclusão -->
+  <div class="modal fade" id="modalExcluir" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form method="POST" class="modal-content p-4" id="formExcluir">
+        {% csrf_token %}
+        <div class="modal-ico"><i class="bi bi-trash3"></i></div>
+        <h5 class="fw-bold mb-1">Excluir chamado?</h5>
+        <p class="text-muted-2 mb-4"><strong id="nomeExcluir"></strong> será removido permanentemente.</p>
+        <div class="d-flex gap-2 justify-content-end">
+          <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn-danger-2">Sim, excluir</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script>
+  document.getElementById('modalExcluir').addEventListener('show.bs.modal', e => {
+    const btn = e.relatedTarget;
+    document.getElementById('formExcluir').action = btn.dataset.url;
+    document.getElementById('nomeExcluir').textContent = btn.dataset.nome;
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% load static %}<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Rômulo Delalíbera Júnior">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %} · DeskFlow</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/logo.svg' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+  </head>
+  <body>
+    <div class="app">
+      {% include 'includes/header.html' %}
+      <div class="main">
+        <div class="topbar">
+          <button class="btn-menu d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-label="Abrir menu">
+            <i class="bi bi-list"></i>
+          </button>
+          <form action="{% url 'buscar_chamado' %}" method="GET" class="search" role="search">
+            <i class="bi bi-search"></i>
+            <input type="search" name="buscar" id="busca" value="{{ query|default:'' }}" placeholder="Buscar chamado, solicitante, patrimônio…" title="Busca por título, solicitante, setor, patrimônio ou #protocolo" aria-label="Buscar chamados">
+            <kbd class="d-none d-md-inline">/</kbd>
+          </form>
+          <span class="topbar-date">{% now "l, d \d\e F" %}</span>
+        </div>
+        <main class="content">
+          {% for message in messages %}
+            <div class="flash"><i class="bi bi-check-circle-fill"></i> {{ message }}</div>
+          {% endfor %}
+          {% block content %}{% endblock %}
+        </main>
+        {% include 'includes/footer.html' %}
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script>
+      // Atalho "/" para focar a busca
+      document.addEventListener('keydown', e => {
+        if (e.key === '/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
+          e.preventDefault(); document.getElementById('busca').focus();
+        }
+      });
+    </script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

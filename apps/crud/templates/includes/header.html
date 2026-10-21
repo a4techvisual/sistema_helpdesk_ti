@@ -1,0 +1,46 @@
+{% load static %}{% with rn=request.resolver_match.url_name st=request.GET.status %}
+<aside class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar">
+  <div class="offcanvas-body">
+    <a class="brand" href="{% url 'index' %}">
+      <img src="{% static 'img/logo.svg' %}" alt="" class="brand-logo" width="34" height="34">
+      <span>DeskFlow<small>Helpdesk de TI</small></span>
+    </a>
+
+    <a href="{% url 'novo-chamado' %}" class="side-cta"><i class="bi bi-plus-lg"></i> Novo chamado</a>
+
+    <div class="nav-label">Navegação</div>
+    <a class="side-link {% if rn == 'index' and not st %}active{% endif %}" href="{% url 'index' %}">
+      <i class="bi bi-grid-1x2"></i> Painel
+    </a>
+    <a class="side-link {% if rn == 'novo-chamado' %}active{% endif %}" href="{% url 'novo-chamado' %}">
+      <i class="bi bi-ticket-perforated"></i> Abrir chamado
+    </a>
+    <a class="side-link" href="/admin/">
+      <i class="bi bi-sliders"></i> Administração
+    </a>
+
+    <div class="nav-label">Filas</div>
+    <a class="side-link {% if st == 'aberto' %}active{% endif %}" href="{% url 'index' %}?status=aberto">
+      <span class="dot" style="background:var(--accent)"></span> Abertos
+    </a>
+    <a class="side-link {% if st == 'andamento' %}active{% endif %}" href="{% url 'index' %}?status=andamento">
+      <span class="dot" style="background:var(--p-media)"></span> Em andamento
+    </a>
+    <a class="side-link {% if st == 'aguardando' %}active{% endif %}" href="{% url 'index' %}?status=aguardando">
+      <span class="dot" style="background:var(--p-alta)"></span> Aguardando usuário
+    </a>
+    <a class="side-link {% if st == 'resolvido' %}active{% endif %}" href="{% url 'index' %}?status=resolvido">
+      <span class="dot" style="background:var(--p-baixa)"></span> Resolvidos
+    </a>
+
+    <div class="side-user">
+      <span class="avatar">{{ user.username|slice:":1" }}</span>
+      <div>
+        <div class="name">{{ user.username }}</div>
+        <div class="role">Analista de suporte</div>
+      </div>
+      <a href="{% url 'logout' %}" class="btn-logout" title="Sair"><i class="bi bi-box-arrow-right"></i></a>
+    </div>
+  </div>
+</aside>
+{% endwith %}

@@ -1,0 +1,35 @@
+{% extends 'base-crud.html' %}
+{% load static %}
+{% block title %}Novo chamado{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Abrir chamado</h1>
+    <p class="page-sub">Quanto mais detalhes, mais rápido o atendimento.</p>
+  </div>
+</div>
+<div class="row g-4">
+  <div class="col-12 col-xl-8">
+    <form action="{% url 'novo-chamado' %}" method="POST" class="form-card" novalidate>
+      {% csrf_token %}
+      {% include 'includes/form.html' %}
+      <div class="form-actions">
+        <a href="{% url 'index' %}" class="btn-ghost">Cancelar</a>
+        <button type="submit" class="btn-accent"><i class="bi bi-send"></i> Abrir chamado</button>
+      </div>
+    </form>
+  </div>
+  <div class="col-12 col-xl-4">
+    <div class="side-info">
+      <h3><i class="bi bi-lightbulb me-1" style="color:var(--accent)"></i> Dicas para um bom chamado</h3>
+      <ul class="ps-3 mt-3 mb-0">
+        <li>Use um título curto e direto: <em>“Impressora do 2º andar não imprime”</em>.</li>
+        <li>Informe a mensagem de erro exata, se houver.</li>
+        <li>Anote o número de <strong>patrimônio</strong> da etiqueta do equipamento.</li>
+        <li>Reserve <strong>Crítica</strong> para quando o setor inteiro está parado.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/script.js' %}"></script>{% endblock %}

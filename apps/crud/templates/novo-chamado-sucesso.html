@@ -1,0 +1,22 @@
+{% extends 'base-crud.html' %}
+{% block title %}Chamado aberto{% endblock %}
+{% block content %}
+<div class="success-wrap">
+  <div class="ticket-stub">
+    <div class="check"><i class="bi bi-check-lg"></i></div>
+    <div class="text-muted-2 fw-semibold">Chamado aberto com sucesso</div>
+    <div class="stub-proto">{{ chamado.protocolo }}</div>
+    <div class="stub-divider"></div>
+    <div class="stub-grid">
+      <div><div class="k">Título</div><div class="v">{{ chamado.titulo }}</div></div>
+      <div><div class="k">Prioridade</div><div class="v"><span class="pill prio-{{ chamado.prioridade }}">{{ chamado.get_prioridade_display }}</span></div></div>
+      <div><div class="k">Solicitante</div><div class="v">{{ chamado.solicitante }}</div></div>
+      <div><div class="k">Setor</div><div class="v">{{ chamado.setor }}</div></div>
+    </div>
+  </div>
+  <div class="d-flex gap-2 justify-content-center mt-4 flex-wrap">
+    <a href="{% url 'index' %}" class="btn-ghost"><i class="bi bi-grid-1x2"></i> Ir para o painel</a>
+    <a href="{% url 'novo-chamado' %}" class="btn-accent"><i class="bi bi-plus-lg"></i> Abrir outro</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base-crud.html' %}
+{% load static %}
+{% block title %}Alterar chamado {{ chamado.protocolo }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="back"><a href="{% url 'index' %}"><i class="bi bi-arrow-left"></i> Painel</a></div>
+    <h1 class="page-title"><span class="mono text-muted-2">{{ chamado.protocolo }}</span> {{ chamado.titulo }}</h1>
+    <p class="page-sub">Atualize o status e as informações do atendimento.</p>
+  </div>
+</div>
+<div class="row g-4">
+  <div class="col-12 col-xl-8">
+    <form action="{% url 'alterar_chamado' chamado.codigo_chamado %}" method="POST" class="form-card" novalidate>
+      {% csrf_token %}
+      {% include 'includes/form.html' %}
+      <div class="form-actions">
+        <a href="{% url 'index' %}" class="btn-ghost">Cancelar</a>
+        <button type="submit" class="btn-accent"><i class="bi bi-check2"></i> Salvar alterações</button>
+      </div>
+    </form>
+  </div>
+  <div class="col-12 col-xl-4">
+    <div class="side-info">
+      <h3>Resumo</h3>
+      <ul class="list-unstyled mt-3 mb-0">
+        <li><div class="k">Protocolo</div><div class="v mono">{{ chamado.protocolo }}</div></li>
+        <li><div class="k">Aberto em</div><div class="v">{{ chamado.data_abertura|date:"d/m/Y \à\s H:i" }}</div></li>
+        <li><div class="k">Última atualização</div><div class="v">{{ chamado.data_atualizacao|timesince }} atrás</div></li>
+        <li><div class="k">Situação atual</div><div class="v">{{ chamado.get_status_display }} · {{ chamado.get_prioridade_display }}</div></li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/script.js' %}"></script>{% endblock %}

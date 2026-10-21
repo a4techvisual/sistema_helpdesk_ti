@@ -1,0 +1,29 @@
+{% extends 'base-login.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+  <h2 class="mb-1">Entrar</h2>
+  <p class="text-muted-2 mb-4">Use suas credenciais de analista.</p>
+
+  {% for message in messages %}<div class="alert-ok"><i class="bi bi-check-circle"></i> {{ message }}</div>{% endfor %}
+  {% if error %}<div class="alert-erro"><i class="bi bi-exclamation-circle"></i> {{ error }}</div>{% endif %}
+
+  <form action="" method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="username" class="form-label">Usuário</label>
+      <div class="input-ico">
+        <i class="bi bi-person"></i>
+        <input type="text" class="form-control" id="username" name="username" placeholder="seu.usuario" autocomplete="username" required autofocus>
+      </div>
+    </div>
+    <div class="mb-4">
+      <label for="password" class="form-label">Senha</label>
+      <div class="input-ico">
+        <i class="bi bi-lock"></i>
+        <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+    </div>
+    <button type="submit" class="btn-accent">Entrar <i class="bi bi-arrow-right"></i></button>
+  </form>
+  <p class="auth-switch">Não possui cadastro? <a href="{% url 'novo_usuario' %}">Cadastre-se</a></p>
+{% endblock %}
